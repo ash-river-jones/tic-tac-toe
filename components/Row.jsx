@@ -1,11 +1,16 @@
 import Square from './Square';
 
-export default function Row({ rowStats, handelSquareClick }) {
-	console.log(rowStats);
+export default function Row({ playerOneTurn, rowStats, handelSquareClick }) {
 	return (
 		<div className='flex'>
-			{rowStats.map((squareStats) => (
-				<Square squareStats={squareStats} handelSquareClick={handelSquareClick} />
+			{rowStats.stats.map((squareStats) => (
+				<Square
+					key={squareStats.square_id}
+					playerOneTurn={playerOneTurn}
+					rowStats={rowStats}
+					squareStats={squareStats}
+					handelSquareClick={handelSquareClick}
+				/>
 			))}
 		</div>
 	);

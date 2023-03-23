@@ -1,10 +1,15 @@
 import Row from './Row';
 
-export default function Board({ gameStats, handelSquareClick }) {
+export default function Board({ playerOneTurn, gameStats, handelSquareClick }) {
 	return (
 		<section className='flex flex-col'>
 			{gameStats.map((rowStats) => (
-				<Row rowStats={rowStats} handelSquareClick={handelSquareClick} />
+				<Row
+					key={rowStats.row_id}
+					playerOneTurn={playerOneTurn}
+					rowStats={rowStats}
+					handelSquareClick={handelSquareClick}
+				/>
 			))}
 		</section>
 	);

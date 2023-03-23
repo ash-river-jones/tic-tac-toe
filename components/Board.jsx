@@ -1,6 +1,6 @@
 import Row from './Row';
 
-export default function Board({ playerOneTurn, gameStats, handelSquareClick }) {
+export default function Board({ handelSquareReset, playerOneTurn, gameStats, handelSquareClick }) {
 	return (
 		<section className='flex flex-col'>
 			{gameStats.map((rowStats) => (
@@ -9,6 +9,7 @@ export default function Board({ playerOneTurn, gameStats, handelSquareClick }) {
 					playerOneTurn={playerOneTurn}
 					rowStats={rowStats}
 					handelSquareClick={handelSquareClick}
+					handelSquareReset={handelSquareReset}
 				/>
 			))}
 		</section>

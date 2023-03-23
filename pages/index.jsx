@@ -1,11 +1,6 @@
 import Head from 'next/head';
-import Image from 'next/image';
-import { Inter } from 'next/font/google';
-import styles from '@/styles/Home.module.css';
 import Board from '@/components/Board';
 import { useEffect, useState } from 'react';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
 	const gameStatsStart = [
@@ -74,9 +69,10 @@ export default function Home() {
 	const [gameStats, setGameStats] = useState(gameStatsStart);
 	const [playerOneTurn, setPlayerOneTurn] = useState(true);
 	const [winner, setWinner] = useState(0);
+	const [gameDone, setGameDone] = useState(false);
 
-	const handelSquareClick = (played, isX, isO, row_id, square_id) => {
-		if (played) {
+	const handelSquareClick = (played, row_id, square_id) => {
+		if (played || winner === 1 || winner === -1) {
 			return;
 		}
 		const foundRow = gameStats.find((row) => row.row_id === row_id);
@@ -127,14 +123,39 @@ export default function Home() {
 		return 0;
 	};
 
+	const handelPlayAgain = () => {
+		setGameStats(gameStatsStart);
+		setPlayerOneTurn(true);
+		setGameDone(false);
+		setWinner(0);
+	};
+
+	const handelSquareReset = (played, row_id, square_id) => {
+		console.log('played: ', played);
+		console.log('row_id: ', row_id);
+		console.log('square_id: ', square_id);
+	};
+
+	const handelReset = () => {
+		handelSquareReset();
+
+		setGameStats(gameStatsStart);
+		setPlayerOneTurn(true);
+		setGameDone(false);
+		setWinner(0);
+	};
+
 	useEffect(() => {
 		const winner = checkWinner(gameStats);
 		if (winner === 1) {
 			setWinner(1);
+			setGameDone(true);
 		} else if (winner === -1) {
 			setWinner(-1);
+			setGameDone(true);
 		} else {
 			setWinner(0);
+			setGameDone(false);
 		}
 	}, [gameStats]);
 
@@ -146,8 +167,28 @@ export default function Home() {
 				<meta name='viewport' content='width=device-width, initial-scale=1' />
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
-			<main className='bg-white flex justify-center py-12'>
-				<Board playerOneTurn={playerOneTurn} gameStats={gameStats} handelSquareClick={handelSquareClick} />
+			<main className='bg-white flex flex-col justify-center items-center py-12'>
+				<section className='flex flex-col items-center'>
+					<h1 className='text-4xl font-bold mb-4'>Tic Tac Toe</h1>
+				</section>
+				<Board
+					playerOneTurn={playerOneTurn}
+					gameStats={gameStats}
+					handelSquareClick={handelSquareClick}
+					handelSquareReset={handelSquareReset}
+				/>
+				{winner === 1 && <h2 className='text-2xl font-bold mt-4'>Player One Wins!</h2>}
+				{winner === -1 && <h2 className='text-2xl font-bold mt-4'>Player Two Wins!</h2>}
+				<section className='flex gap-4 items-center mt-4'>
+					<button onClick={handelReset} className='border border-black p-2 rounded-md'>
+						Reset
+					</button>
+					{gameDone && (
+						<button onClick={handelPlayAgain} className='border border-black p-2 rounded-md'>
+							Play Again
+						</button>
+					)}
+				</section>
 			</main>
 		</>
 	);

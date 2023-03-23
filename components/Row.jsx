@@ -1,6 +1,6 @@
 import Square from './Square';
 
-export default function Row({ playerOneTurn, rowStats, handelSquareClick }) {
+export default function Row({ handelSquareReset, playerOneTurn, rowStats, handelSquareClick }) {
 	return (
 		<div className='flex'>
 			{rowStats.stats.map((squareStats) => (
@@ -10,6 +10,7 @@ export default function Row({ playerOneTurn, rowStats, handelSquareClick }) {
 					rowStats={rowStats}
 					squareStats={squareStats}
 					handelSquareClick={handelSquareClick}
+					handelSquareReset={handelSquareReset}
 				/>
 			))}
 		</div>

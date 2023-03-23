@@ -61,5 +61,4 @@ const gameStats = [
 	},
 ];
 
-// based on the above "gameStats" for tic tac toe, write a function that will find out when a player has won.
-// Xs have a value of "1", Os have a value of "-1" and unplayed squares are "0".
+function calcDaysBetween(start, end) {}

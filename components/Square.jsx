@@ -2,7 +2,7 @@ import X from './X';
 import O from './O';
 import { useEffect, useState } from 'react';
 
-export default function Square({ playerOneTurn, rowStats, squareStats, handelSquareClick }) {
+export default function Square({ handelSquareReset, playerOneTurn, rowStats, squareStats, handelSquareClick }) {
 	const [played, setPlayed] = useState(squareStats.played);
 	const [isX, setIsX] = useState(false);
 	const [isO, setIsO] = useState(false);
@@ -15,10 +15,18 @@ export default function Square({ playerOneTurn, rowStats, squareStats, handelSqu
 		}
 	}, [squareStats, playerOneTurn]);
 
+	useEffect(() => {
+		if (played) {
+			handelSquareReset(played, rowStats.row_id, squareStats.square_id);
+		}
+	}, []);
+
+	// handelSquareReset(played, rowStats.row_id, squareStats.square_id);
+
 	return (
 		<div
 			onClick={() => {
-				handelSquareClick(played, isX, isO, rowStats.row_id, squareStats.square_id);
+				handelSquareClick(played, rowStats.row_id, squareStats.square_id);
 				setPlayed(true);
 			}}
 			className='border w-16 h-16 flex items-center justify-center'

@@ -71,10 +71,11 @@ export default function Home() {
 	const [winner, setWinner] = useState(0);
 	const [gameDone, setGameDone] = useState(false);
 
-	const handelSquareClick = (played, row_id, square_id) => {
-		if (played || winner === 1 || winner === -1) {
-			return;
-		}
+	const [playerOneScore, setPlayerOneScore] = useState(0);
+	const [playerTwoScore, setPlayerTwoScore] = useState(0);
+
+	const handleSquareClick = (played, row_id, square_id) => {
+		if (played || winner === 1 || winner === -1) return;
 		const foundRow = gameStats.find((row) => row.row_id === row_id);
 		const foundSquare = foundRow.stats.find((square) => square.square_id === square_id);
 		foundSquare.played = true;
@@ -96,53 +97,35 @@ export default function Home() {
 		setPlayerOneTurn(!playerOneTurn);
 	};
 
+	const updateScore = () => {
+		if (winner === 1) {
+			setPlayerOneScore(playerOneScore + 1);
+		} else if (winner === -1) {
+			setPlayerTwoScore(playerTwoScore + 1);
+		}
+	};
+
 	const checkWinner = (gameStats) => {
 		const board = gameStats.map((row) => row.stats.map((square) => square.value));
 
-		// Check rows
 		for (const row of board) {
 			const sum = row.reduce((a, b) => a + b);
 			if (sum === 3) return 1;
 			if (sum === -3) return -1;
 		}
 
-		// Check columns
 		for (let col = 0; col < 3; col++) {
 			const sum = board[0][col] + board[1][col] + board[2][col];
 			if (sum === 3) return 1;
 			if (sum === -3) return -1;
 		}
 
-		// Check diagonals
 		const diag1 = board[0][0] + board[1][1] + board[2][2];
 		const diag2 = board[0][2] + board[1][1] + board[2][0];
 		if (diag1 === 3 || diag2 === 3) return 1;
 		if (diag1 === -3 || diag2 === -3) return -1;
 
-		// No winner
 		return 0;
-	};
-
-	const handelPlayAgain = () => {
-		setGameStats(gameStatsStart);
-		setPlayerOneTurn(true);
-		setGameDone(false);
-		setWinner(0);
-	};
-
-	const handelSquareReset = (played, row_id, square_id) => {
-		console.log('played: ', played);
-		console.log('row_id: ', row_id);
-		console.log('square_id: ', square_id);
-	};
-
-	const handelReset = () => {
-		handelSquareReset();
-
-		setGameStats(gameStatsStart);
-		setPlayerOneTurn(true);
-		setGameDone(false);
-		setWinner(0);
 	};
 
 	useEffect(() => {
@@ -159,6 +142,37 @@ export default function Home() {
 		}
 	}, [gameStats]);
 
+	useEffect(() => {
+		updateScore();
+	}, [winner]);
+
+	const resetBoard = () => {
+		setGameStats([...gameStatsStart]);
+		setPlayerOneTurn(true);
+		setWinner(0);
+		setGameDone(false);
+	};
+
+	const resetGame = () => {
+		setGameStats([...gameStatsStart]);
+		setPlayerOneTurn(true);
+		setWinner(0);
+		setGameDone(false);
+		resetScore();
+	};
+
+	const playAgain = () => {
+		setGameStats([...gameStatsStart]);
+		setPlayerOneTurn(true);
+		setWinner(0);
+		setGameDone(false);
+	};
+
+	const resetScore = () => {
+		setPlayerOneScore(0);
+		setPlayerTwoScore(0);
+	};
+
 	return (
 		<>
 			<Head>
@@ -169,25 +183,72 @@ export default function Home() {
 			</Head>
 			<main className='bg-white flex flex-col justify-center items-center py-12'>
 				<section className='flex flex-col items-center'>
-					<h1 className='text-4xl font-bold mb-4'>Tic Tac Toe</h1>
+					<h1 className='text-xl font-bold mb-4 sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl'>
+						Tic Tac Toe
+					</h1>
 				</section>
-				<Board
-					playerOneTurn={playerOneTurn}
-					gameStats={gameStats}
-					handelSquareClick={handelSquareClick}
-					handelSquareReset={handelSquareReset}
-				/>
-				{winner === 1 && <h2 className='text-2xl font-bold mt-4'>Player One Wins!</h2>}
-				{winner === -1 && <h2 className='text-2xl font-bold mt-4'>Player Two Wins!</h2>}
+
 				<section className='flex gap-4 items-center mt-4'>
-					<button onClick={handelReset} className='border border-black p-2 rounded-md'>
-						Reset
-					</button>
-					{gameDone && (
-						<button onClick={handelPlayAgain} className='border border-black p-2 rounded-md'>
-							Play Again
+					<div className='flex flex-col items-center'>
+						<h2 className='text-xl font-bold mb-4 sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl'>
+							Player One
+						</h2>
+						<h2 className='text-xl font-bold mb-4 sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl'>
+							{playerOneScore}
+						</h2>
+					</div>
+					<div className='flex flex-col items-center'>
+						<h2 className='text-xl font-bold mb-4 sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl'>
+							Player Two
+						</h2>
+						<h2 className='text-xl font-bold mb-4 sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl'>
+							{playerTwoScore}
+						</h2>
+					</div>
+				</section>
+
+				<Board playerOneTurn={playerOneTurn} gameStats={gameStats} handleSquareClick={handleSquareClick} />
+
+				{/* display the winner */}
+				{winner === 1 && (
+					<h2 className='text-xl font-bold mt-4 sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl'>
+						Player One Wins!
+					</h2>
+				)}
+				{winner === -1 && (
+					<h2 className='text-xl font-bold mt-4 sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl'>
+						Player Two Wins!
+					</h2>
+				)}
+
+				<section className='flex flex-col gap-4 items-center mt-4'>
+					<section className='flex flex-col items-center'>
+						<button
+							onClick={resetBoard}
+							className='border border-black p-2 rounded-md text-sm sm:text-md md:text-lg lg:text-xl xl:text-2xl'
+						>
+							Reset Board
 						</button>
-					)}
+					</section>
+					<section className='flex gap-4 items-center'>
+						{gameDone && (
+							<button
+								onClick={resetGame}
+								className='border border-black p-2 rounded-md text-sm sm:text-md md:text-lg lg:text-xl xl:text-2xl'
+							>
+								Reset Scores
+							</button>
+						)}
+
+						{gameDone && (
+							<button
+								onClick={playAgain}
+								className='border border-black p-2 rounded-md text-sm sm:text-md md:text-lg lg:text-xl xl:text-2xl'
+							>
+								Play Again
+							</button>
+						)}
+					</section>
 				</section>
 			</main>
 		</>
